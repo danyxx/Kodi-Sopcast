@@ -15,3 +15,11 @@ plugin://script.sopcast.player/?url=sop://broker.sopcast.com:3912/149256
 SopCast: https://4pda.ru/forum/index.php?showtopic=328876
 
 Sop2Http: https://4pda.ru/forum/index.php?showtopic=701033
+
+## Windows
+
+Docker: https://docs.docker.com/docker-for-windows/install/
+
+```
+docker pull danihodovic/sopcast
+```
