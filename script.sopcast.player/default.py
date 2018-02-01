@@ -4,6 +4,7 @@ import xbmc
 import xbmcaddon
 import xbmcplugin
 import sopclient
+import dockersopcast
 import shutil,stat
 import platform
 import subprocess
@@ -28,6 +29,7 @@ LINUX_ARM_QEMU_SOPCLIENT = os.path.join(LINUX_ARM, 'qemu-i386')
 LINUX_A64_QEMU_SOPCLIENT = os.path.join(LINUX_ARM, 'qemuaarch-i386')
 SOP_ACTIVITY = ''
 ENGINE = ''
+DOCKER = ''
 ENV = {}
 
 url = args.get('url', None)[0]
@@ -120,12 +122,19 @@ if url:
             else:
                 #no engine
                 pass
+        elif xbmc.getCondVisibility('system.platform.windows'):
+            DOCKER = 'danihodovic/sopcast'
 
         if ENGINE:
             # kill busy dialog
             if addon_handle > -1:
                 xbmcplugin.endOfDirectory(addon_handle, False, False, False)
             sopclient.SopCastPlayer(engine=ENGINE, env=ENV).playChannel(url, timeout)
+        elif DOCKER:
+            # kill busy dialog
+            if addon_handle > -1:
+                xbmcplugin.endOfDirectory(addon_handle, False, False, False)
+            dockersopcast.DockerSopCastPlayer(container=DOCKER).playChannel(url, timeout)
         elif not SOP_ACTIVITY:
             #external player
             li = ListItem(path=url)
