@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@master
       - name: Create zip name
         id: create_name
-        run: echo "::set-output name=zip_name::$(${ADDON_ID}-${GITHUB_REF#refs/tags/v}.zip)"
+        run: echo ::set-output name=zip_name::${ADDON_ID}-${GITHUB_REF#refs/tags/v}.zip
       - name: Build project
         working-directory: script.sopcast.player
         run: git archive --prefix=${ADDON_ID}/ -o ../artifact.zip -9 HEAD
