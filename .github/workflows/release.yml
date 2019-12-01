@@ -9,17 +9,19 @@ name: Upload Release Asset
 jobs:
   build:
     env:
-      zip_name: "script.sopcast.player.zip"
+      ADDON_ID: "script.sopcast.player"
+      GITHUB_REF: ${{ github.ref }}
     name: Upload Release Asset
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@master
       - name: Build project # This would actually build your project, using zip for an example artifact
+        id: build_project
         working-directory: script.sopcast.player
         run: |
-          git archive --prefix=script.sopcast.player/ -o ../$zip_name -9 HEAD
-          ls -l ..
+          echo "::set-output name=zip_name::$(${ADDON_ID}-${GITHUB_REF#v}.zip)"
+          git archive --prefix=${ADDON_ID}/ -o ../artifact.zip -9 HEAD
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1.0.0
@@ -37,7 +39,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ${{ zip_name }}
-          asset_name: ${{ zip_name }}
+          asset_path: ./artifact.zip
+          asset_name: ${{ steps.build_project.outputs.zip_name }}
           asset_content_type: application/zip
 
